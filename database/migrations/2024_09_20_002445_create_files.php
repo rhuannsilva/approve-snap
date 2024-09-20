@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('path');
             $table->timestamps();
 
-            $table->foreign('id')->references(columns: 'id_request')->on('request_uploads')->onDelete('cascade');
+            $table->foreign('id_request')->references(columns: 'id_request')->on('request_uploads')->onDelete('cascade');
         });
     }
 

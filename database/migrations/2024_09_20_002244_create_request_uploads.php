@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('request_uploads', function (Blueprint $table) {
-            $table->integer('id_request')->primary();
+            $table->increments('id_request')->primary();
             $table->uuid('id_requesting_user');
             $table->uuid('id_analysis_user')->nullable();
             $table->integer('status');

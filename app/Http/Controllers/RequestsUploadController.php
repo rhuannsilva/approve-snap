@@ -10,6 +10,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\FilesController;
+use App\Services\FileStorageService;
+use App\Utils\Logger;
 
 class RequestsUploadController extends Controller{
 
@@ -18,11 +21,9 @@ class RequestsUploadController extends Controller{
 
     public function __construct(
         RequestUploadRepositoryInterface $requestUploadRepositoryInterface,
-        FilesRepositoryInterface $filesRepository
     ){
 
         $this->requestUploadRepositoryInterface = $requestUploadRepositoryInterface;
-        $this->filesRepository = $filesRepository;
     }
     public function index(Request $request){
 
@@ -58,9 +59,11 @@ class RequestsUploadController extends Controller{
                 $data['images'][$key]['name'] = str_replace(' ', '-', $value['name']);
             }
 
+            $fileController = app()->make(FilesController::class);
+
             foreach($data['images'] as $item){
 
-                $result = Storage::put('/pending/' . $item['name'], file_get_contents($item['url']));
+                $result = FileStorageService::upload($item);
 
                 if($result){
 
@@ -70,9 +73,7 @@ class RequestsUploadController extends Controller{
                         'path' => '/pending/' . $item['name'],
                     ];
 
-                    DB::statement('PRAGMA foreign_keys = ON');
-
-                    $this->filesRepository->store($file);
+                    $fileController->store($file);
 
                 }
 
@@ -84,7 +85,12 @@ class RequestsUploadController extends Controller{
 
 
         } catch (\Throwable $th) {
-            dd($th);
+
+            Logger::error('[RequestUploadController]', '[store]',$th->getMessage());
+
+            return response()->json([
+                'msg' => $th->getMessage(),
+            ], 500);
         }
 
     }
