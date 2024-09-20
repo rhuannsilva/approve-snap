@@ -1,13 +1,13 @@
 <?php
 
 namespace App\Repositories;
-use App\Interfaces\RequestsUploadRepositoryInterface;
-use App\Models\RequestsUploads;
+use App\Interfaces\RequestUploadRepositoryInterface;
+use App\Models\RequestUploads;
 
-class RequestsUploadRepository implements RequestsUploadRepositoryInterface{
+class RequestUploadRepository implements RequestUploadRepositoryInterface{
     public function index(){
 
-        return RequestsUploads::with([
+        return RequestUploads::with([
             'requestingUser' => function ($query) { 
                 $query->select('id', 'name', 'permission');
             },
@@ -17,15 +17,15 @@ class RequestsUploadRepository implements RequestsUploadRepositoryInterface{
         ->get();
     }
     public function getById($id){
-       return RequestsUploads::findOrFail($id);
+       return RequestUploads::findOrFail($id);
     }
     public function store(array $data){
-       return RequestsUploads::create($data);
+       return RequestUploads::create($data);
     }
     public function update(array $data,$id){
-       return RequestsUploads::whereId($id)->update($data);
+       return RequestUploads::whereId($id)->update($data);
     }
     public function delete($id){
-        RequestsUploads::destroy($id);
+        RequestUploads::destroy($id);
     }
 }

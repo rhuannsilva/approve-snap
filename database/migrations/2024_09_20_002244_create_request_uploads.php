@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('requests_uploads', function (Blueprint $table) {
+        Schema::create('request_uploads', function (Blueprint $table) {
             $table->integer('id_request')->primary();
             $table->uuid('id_requesting_user');
-            $table->uuid('id_analysis_user');
+            $table->uuid('id_analysis_user')->nullable();
             $table->integer('status');
-            $table->string('observation');
-            $table->string('description');
+            $table->string('observation')->nullable();
+            $table->string('description')->nullable();
             $table->timestamps();
 
             $table->foreign('id_requesting_user')->references('id')->on('users')->onDelete('cascade');

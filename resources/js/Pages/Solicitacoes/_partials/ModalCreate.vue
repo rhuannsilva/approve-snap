@@ -6,14 +6,13 @@ import Modal from '@/Components/Modal.vue';
 const images = ref<Array<{ name: string; url: string }>>([]);
 const fileInput = ref<HTMLInputElement | null>(null);
 
-const emit = defineEmits(['files']);
+const emit = defineEmits(['files', 'save']);
 
 watch(images.value, (newValue) => {
-    emit('files', images)
+    emit('files', images.value)
 })
 
 const removeImage = (index: number) => {
-
     images.value.splice(index, 1);
 };
 
@@ -49,6 +48,10 @@ const processFiles = (files: FileList) => {
         reader.readAsDataURL(file);
     }
 };
+
+const saveImages = () => {
+    emit('save')
+}
 
 </script>
 
@@ -86,7 +89,7 @@ const processFiles = (files: FileList) => {
                         Adicionar Imagem
                     </button>
 
-                    <button class="col-span-1 bg-blue-500 text-white p-2 rounded-md text-center">
+                    <button @click="saveImages()" class="col-span-1 bg-blue-500 text-white p-2 rounded-md text-center">
                         Salvar Imagens
                     </button>
                 </div>

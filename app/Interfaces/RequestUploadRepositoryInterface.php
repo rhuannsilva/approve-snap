@@ -2,7 +2,7 @@
 
 namespace App\Interfaces;
 
-interface RequestsUploadRepositoryInterface
+interface RequestUploadRepositoryInterface
 {
     public function index();
     public function getById($id);

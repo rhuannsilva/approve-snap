@@ -1,27 +1,33 @@
-<script setup lang="ts">
+<script setup lang="js">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import ModalCreate from './_partials/ModalCreate.vue';
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
-import { ref, useTemplateRef, onBeforeMount} from 'vue';
+import { ref, useTemplateRef, onBeforeMount, defineProps} from 'vue';
 
 const requests = ref([]);
 const showModal = ref(false);
-let images = ref<Array<{ name: string; url: string }>>([]);
+const images = ref([]);
+
+const props = defineProps({
+  auth: {
+    required: true
+  },
+});
 
 onBeforeMount(() => {
-    getRequests()
+  getRequests()
 })
 
 const selectedPage = ref('Pendente');
 
-const changePage = (page: string) => {
+const changePage = (page) => {
   selectedPage.value = page;
 };
 
-const decodeStatus = (status: number) : string | undefined => {
+const decodeStatus = (status) => {
 
-  const data : { [key: number]: string } = {
+  const data = {
     0 : 'Pendente',
     1 : 'Aprovado',
     2 : 'Recusado'
@@ -30,7 +36,7 @@ const decodeStatus = (status: number) : string | undefined => {
   return data[status];
 }
 
-const filesSelected = (file: Array<{ name: string; url: string }>) => {
+const filesSelected = (file) => {
   images.value = file;
 }
 
@@ -41,6 +47,23 @@ const getRequests = () => {
   axios.get(url + '/api/')
   .then(response => {
       requests.value = response.data.data
+  })
+}
+
+const createRequests = () => {
+
+  const url = window.location.origin;
+
+  const data = {
+    user : props.auth.user.id,
+    images : images.value
+  }
+
+  console.log(data)
+
+  axios.post(url + '/api/create', data)
+  .then(response => {
+    console.log();
   })
 }
 
@@ -106,7 +129,12 @@ const getRequests = () => {
         </div>
     </AuthenticatedLayout>
 
-    <ModalCreate :show="showModal" @files="filesSelected" @close="showModal = false" />
+    <ModalCreate :show="showModal" @files="filesSelected" @save="createRequests" @close="showModal = false" />
+
+
+    <button @click="createRequests">
+      fdsfsdfsd
+    </button>
 
 </template>
 
