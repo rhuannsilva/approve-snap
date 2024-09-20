@@ -13,7 +13,8 @@ class RequestUploadRepository implements RequestUploadRepositoryInterface{
             },
             'analysisUser' => function ($query) { 
                 $query->select('id', 'name', 'permission');
-            }])
+            },
+            'files'])
         ->get();
     }
     public function getById($id){

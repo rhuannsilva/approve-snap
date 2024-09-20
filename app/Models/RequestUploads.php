@@ -31,6 +31,6 @@ class RequestUploads extends Model
 
     public function files()
     {
-        return $this->hasMany(Files::class);
+        return $this->hasMany(Files::class, 'id_request');
     }
 }
