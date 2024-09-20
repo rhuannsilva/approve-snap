@@ -12,14 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('requests_uploads', function (Blueprint $table) {
-            $table->id();
-            $table->integer('id_requesting_user');
+            $table->integer('id_request')->primary();
+            $table->uuid('id_requesting_user');
+            $table->uuid('id_analysis_user');
             $table->integer('status');
-            $table->integer('id_analysis_user');
             $table->string('observation');
-            $table->integer('observation');
+            $table->string('description');
             $table->timestamps();
+
+            $table->foreign('id_requesting_user')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('id_analysis_user')->references('id')->on('users')->onDelete('cascade');
         });
+        
     }
 
     /**
