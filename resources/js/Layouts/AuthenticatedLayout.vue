@@ -22,12 +22,11 @@ const urls = ref([
 <template>
     <div>
         <div class="min-h-screen bg-[#f8f8ff]">
-            <nav class="bg-blue-default">
-                <!-- Primary Navigation Menu -->
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16">
+            <nav class="border border-b-1">
+                <div class="container m-auto">
+                    <div class="flex justify-end h-16">
                         <div class="flex items-center">
-                            <div class="hidden text-white space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <a v-for="(item, index) in urls" :key="index" :href="route(item.url)"> {{ item.name }} </a>
                             </div>
                         </div>

@@ -49,7 +49,7 @@ const getRequests = () => {
 <template>
     <AuthenticatedLayout>
         <div class="w-full container m-auto">
-            <div class="px-40 flex flex-1 justify-center py-5">
+            <div class="flex flex-1 justify-center py-5">
           <div class="flex flex-col flex-1">
             <div class="flex flex-wrap justify-between p-4">
                 <p class="text-[#0e121b] text-[32px] font-bold leading-tight">Lista de Solicitações</p>
