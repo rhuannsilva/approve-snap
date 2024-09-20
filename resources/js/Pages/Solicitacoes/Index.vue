@@ -1,36 +1,47 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import Modal from '@/Components/Modal.vue';
+import ModalCreate from './_partials/ModalCreate.vue';
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
-import { ref, onBeforeMount} from 'vue';
+import { ref, useTemplateRef, onBeforeMount} from 'vue';
 
 const requests = ref([]);
 const showModal = ref(false);
+let images = ref<Array<{ name: string; url: string }>>([]);
 
 onBeforeMount(() => {
     getRequests()
 })
 
+const selectedPage = ref('Pendente');
+
+const changePage = (page: string) => {
+  selectedPage.value = page;
+};
+
 const decodeStatus = (status: number) : string | undefined => {
 
-    const data : { [key: number]: string } = {
-        0 : 'Pendente',
-        1 : 'Aprovado',
-        2 : 'Recusado'
-    }
+  const data : { [key: number]: string } = {
+    0 : 'Pendente',
+    1 : 'Aprovado',
+    2 : 'Recusado'
+  }
 
-    return data[status];
+  return data[status];
+}
+
+const filesSelected = (file: Array<{ name: string; url: string }>) => {
+  images.value = file;
 }
 
 const getRequests = () => {
 
-    const url = window.location.origin;
+  const url = window.location.origin;
 
-    axios.get(url + '/api/')
-    .then(response => {
-        requests.value = response.data.data
-    })
+  axios.get(url + '/api/')
+  .then(response => {
+      requests.value = response.data.data
+  })
 }
 
 </script>
@@ -48,17 +59,17 @@ const getRequests = () => {
             </div>
             <div class="pb-3">
               <div class="flex border-b border-[#d0d7e7] px-4 gap-8">
-                <a class="flex flex-col items-center justify-center border-b-[3px] border-b-[#195de6] text-[#0e121b] pb-[13px] pt-4" href="#">
-                  <p class="text-[#0e121b] text-sm font-bold leading-normal tracking-[0.015em]">Pendente</p>
+                <a @click="changePage('Pendente')" :class="(selectedPage == 'Pendente') ? 'border-b-[2px] border-b-[#195de6] text-[#0e121b]' : 'text-[#4e6797] border-b-transparent'" class="flex flex-col items-center justify-center pb-[13px] pt-4" href="#">
+                  <p class="text-sm font-bold leading-normal tracking-[0.015em]">Pendente</p>
                 </a>
-                <a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#4e6797] pb-[13px] pt-4" href="#">
-                  <p class="text-[#4e6797] text-sm font-bold leading-normal tracking-[0.015em]">Aprovados</p>
+                <a @click="changePage('Aprovados')" :class="(selectedPage == 'Aprovados') ? 'border-b-[3px] border-b-[#195de6] text-[#0e121b]' : 'text-[#4e6797] border-b-transparent'" class="flex flex-col items-center justify-center border-b-[3px] pb-[13px] pt-4" href="#">
+                  <p class="text-sm font-bold leading-normal tracking-[0.015em]">Aprovados</p>
                 </a>
-                <a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#4e6797] pb-[13px] pt-4" href="#">
-                  <p class="text-[#4e6797] text-sm font-bold leading-normal tracking-[0.015em]">Recusados</p>
+                <a @click="changePage('Recusados')" :class="(selectedPage == 'Recusados') ? 'border-b-[3px] border-b-[#195de6] text-[#0e121b]' : 'text-[#4e6797] border-b-transparent'" class="flex flex-col items-center justify-center border-b-[3px] pb-[13px] pt-4" href="#">
+                  <p class=" text-sm font-bold leading-normal tracking-[0.015em]">Recusados</p>
                 </a>
-                <a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#4e6797] pb-[13px] pt-4" href="#">
-                  <p class="text-[#4e6797] text-sm font-bold leading-normal tracking-[0.015em]">Todos</p>
+                <a @click="changePage('Todos')" :class="(selectedPage == 'Todos') ? 'border-b-[3px] border-b-[#195de6] text-[#0e121b]' : 'text-[#4e6797] border-b-transparent'" class="flex flex-col items-center justify-center pb-[13px] pt-4" href="#">
+                  <p class="text-sm font-bold leading-normal tracking-[0.015em]">Todos</p>
                 </a>
               </div>
             </div>
@@ -95,7 +106,7 @@ const getRequests = () => {
         </div>
     </AuthenticatedLayout>
 
-    <Modal :show="showModal" @close="showModal = false">
-        
-    </Modal>
+    <ModalCreate :show="showModal" @files="filesSelected" @close="showModal = false" />
+
 </template>
+
