@@ -24,9 +24,11 @@ const submit = () => {
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="name" value="Name" />
+                <label for="name" value="Name" />
 
-                <TextInput
+
+
+                <input
                     id="name"
                     type="text"
                     class="mt-1 block w-full"
@@ -40,9 +42,9 @@ const submit = () => {
             </div>
 
             <div class="mt-4">
-                <InputLabel for="email" value="Email" />
+                <label for="email" value="Email" />
 
-                <TextInput
+                <input
                     id="email"
                     type="email"
                     class="mt-1 block w-full"
@@ -55,9 +57,9 @@ const submit = () => {
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password" value="Password" />
+                <label for="password" value="Password" />
 
-                <TextInput
+                <input
                     id="password"
                     type="password"
                     class="mt-1 block w-full"
@@ -70,9 +72,9 @@ const submit = () => {
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password_confirmation" value="Confirm Password" />
+                <label for="password_confirmation" value="Confirm Password" />
 
-                <TextInput
+                <input
                     id="password_confirmation"
                     type="password"
                     class="mt-1 block w-full"
@@ -92,9 +94,9 @@ const submit = () => {
                     Already registered?
                 </Link>
 
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                <button>
                     Register
-                </PrimaryButton>
+                </button>
             </div>
         </form>
     </GuestLayout>

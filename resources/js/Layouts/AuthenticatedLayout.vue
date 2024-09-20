@@ -5,6 +5,18 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import { Link } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
+
+const urls = ref([
+    {
+        name: 'Solicitações',
+        url: 'index'
+    },
+    {
+        name: 'Permissões',
+        url: 'admin.permissao'
+    }
+]);
+
 </script>
 
 <template>
@@ -16,7 +28,7 @@ const showingNavigationDropdown = ref(false);
                     <div class="flex justify-between h-16">
                         <div class="flex items-center">
                             <div class="hidden text-white space-x-8 sm:-my-px sm:ms-10 sm:flex">
-
+                                <a v-for="(item, index) in urls" :key="index" :href="route(item.url)"> {{ item.name }} </a>
                             </div>
                         </div>
 
