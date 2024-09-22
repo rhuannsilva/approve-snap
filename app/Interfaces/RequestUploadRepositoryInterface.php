@@ -2,9 +2,9 @@
 
 namespace App\Interfaces;
 
-interface RequestsUploadRepositoryInterface
+interface RequestUploadRepositoryInterface
 {
-    public function index();
+    public function index($data);
     public function getById($id);
     public function store(array $data);
     public function update(array $data,$id);

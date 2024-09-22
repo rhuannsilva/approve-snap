@@ -9,3 +9,5 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/', [RequestsUploadController::class,'index']);
+Route::post('/create', [RequestsUploadController::class,'store']);
+Route::post('/approve-or-rejected', [RequestsUploadController::class,'approveOrRejected']);

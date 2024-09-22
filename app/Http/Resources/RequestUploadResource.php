@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\ImageResource;
 
 class RequestUploadResource extends JsonResource
 {
@@ -15,11 +16,24 @@ class RequestUploadResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' =>$this->id_request,
+            'id_request' => $this->id_request,
             'id_requesting_user' => $this->id_requesting_user,
+            'id_analysis_user' => $this->id_analysis_user,
             'status' => $this->status,
             'observation' => $this->observation,
-            'created_at' => $this->created_at,
+            'description' => $this->description,
+            'create_date' => $this->create_date,
+            'edit_date' => $this->edit_date,
+            'requesting_user' => $this->requestingUser ? [
+                'id' => $this->requestingUser->id,
+                'name' => $this->requestingUser->name,
+                'permission' => $this->requestingUser->permission,
+            ] : null,
+            'analysis_user' => $this->analysisUser ? [
+                'id' => $this->analysisUser->id,
+                'name' => $this->analysisUser->name,
+            ] : null,
+            'files' => ImageResource::collection($this->files)
         ];
     }
 }

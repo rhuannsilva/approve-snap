@@ -1,19 +1,23 @@
 <script setup lang="ts">
 
-import { ref, defineEmits, watch } from 'vue';
+import { ref, defineEmits, watch, defineProps } from 'vue';
 import Modal from '@/Components/Modal.vue';
+import Loading from '@/Components/Loading.vue';
 
 const images = ref<Array<{ name: string; url: string }>>([]);
 const fileInput = ref<HTMLInputElement | null>(null);
 
-const emit = defineEmits(['files']);
+const emit = defineEmits(['files', 'save']);
+
+const props = defineProps<{
+    isLoadingCreate : boolean
+}>();
 
 watch(images.value, (newValue) => {
-    emit('files', images)
+    emit('files', images.value)
 })
 
 const removeImage = (index: number) => {
-
     images.value.splice(index, 1);
 };
 
@@ -49,6 +53,10 @@ const processFiles = (files: FileList) => {
         reader.readAsDataURL(file);
     }
 };
+
+const saveImages = () => {
+    emit('save')
+}
 
 </script>
 
@@ -86,8 +94,9 @@ const processFiles = (files: FileList) => {
                         Adicionar Imagem
                     </button>
 
-                    <button class="col-span-1 bg-blue-500 text-white p-2 rounded-md text-center">
-                        Salvar Imagens
+                    <button @click="saveImages()" :disabled="props.isLoadingCreate"  class="col-span-1 bg-blue-500 text-white p-2 flex justify-center items-center rounded-md text-center">
+                        <span v-if="!props.isLoadingCreate">Salvar Imagens</span>
+                        <Loading :color="'#fff'" :size="22" v-else />
                     </button>
                 </div>
             </div>
