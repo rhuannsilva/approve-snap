@@ -25,12 +25,7 @@ const urls = ref([
             <nav class="border border-b-1">
                 <div class="container m-auto">
                     <div class="flex justify-end h-16">
-                        <div class="flex items-center">
-                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <a v-for="(item, index) in urls" :key="index" :href="route(item.url)"> {{ item.name }} </a>
-                            </div>
-                        </div>
-
+                        
                         <div class="hidden sm:flex sm:items-center sm:ms-6">
                             <!-- Settings Dropdown -->
                             <div class="ms-3 relative">
@@ -60,7 +55,6 @@ const urls = ref([
                                     </template>
 
                                     <template #content>
-                                        <DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
                                         <DropdownLink :href="route('logout')" method="post" as="button">
                                             Log Out
                                         </DropdownLink>

@@ -27,7 +27,6 @@ class RequestUploadResource extends JsonResource
             'requesting_user' => $this->requestingUser ? [
                 'id' => $this->requestingUser->id,
                 'name' => $this->requestingUser->name,
-                'permission' => $this->requestingUser->permission,
             ] : null,
             'analysis_user' => $this->analysisUser ? [
                 'id' => $this->analysisUser->id,
