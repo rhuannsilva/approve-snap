@@ -30,8 +30,8 @@ class RequestUploadResource extends JsonResource
                 'permission' => $this->requestingUser->permission,
             ] : null,
             'analysis_user' => $this->analysisUser ? [
-                'id' => $this->analysis_user->id,
-                'name' => $this->analysis_user->name,
+                'id' => $this->analysisUser->id,
+                'name' => $this->analysisUser->name,
             ] : null,
             'files' => ImageResource::collection($this->files)
         ];

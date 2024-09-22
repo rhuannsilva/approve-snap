@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import ModalCreate from './_partials/ModalCreate.vue';
+import ModalAnalysis from './_partials/ModalAnalysis.vue';
 import Detailing from './_partials/Detailing.vue';
 import Paginator from '@/Components/Paginator.vue';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { ref, onBeforeMount, defineProps, watch } from 'vue';
 
 const requests = ref<RequestsResponse | null>(null);
-const showModal = ref(false);
+const showModalCreate = ref<boolean>(false);
+const showModalAnalysis = ref<boolean>(false)
+const approveOrRejectedSelected = ref<RequestItem>()
+const approveOrRejectedSelectedStatus = ref<number>()
 const images = ref<File[]>([]);
 const interlivedItems = ref<{ data: RequestItem | null; type: 'data' | 'details' }[]>([]);
 const selected = ref<number>(-1);
@@ -21,6 +25,7 @@ interface RequestItem {
   requesting_user: {
     name: string;
   };
+  id_requesting_user: string;
   status: number;
   create_date: string;
   files: any[];
@@ -41,18 +46,17 @@ interface Auth {
 
 const props = defineProps<{
   auth: Auth;
-  isLoadingCreate: boolean;
 }>();
 
 onBeforeMount(() => {
   getRequests()
 })
 
-watch(selectedPage, (newValue) => {
+watch(selectedPage, (newValue : Number) => {
   getRequests()
 })
 
-const validateApproval = (item: any): boolean => {
+const validateApproval = (item: RequestItem): boolean => {
 
   if (props.auth.user.permission === 0) {
     return false;
@@ -60,6 +64,10 @@ const validateApproval = (item: any): boolean => {
 
   if (item.status === 2 || item.status === 1) {
     return false;
+  }
+
+  if(props.auth.user.id == item.id_requesting_user){
+    return false
   }
 
   return true;
@@ -88,7 +96,7 @@ const changePage = (page: number) => {
 
 };
 
-const decodeStatus = (status: number | any): string => {
+const decodeStatus = (status: number): string => {
 
   const data: Record<number, string> = {
     0: 'Pendente',
@@ -113,7 +121,7 @@ const getRequests = () => {
   const url = window.location.origin;
 
   axios.get<RequestsResponse>(url + `/api?page=${perPage.value}&status=${selectedPage.value}`)
-  .then(response => {
+  .then((response : AxiosResponse<RequestsResponse>) => {
       requests.value = response.data
       interlive();
   })
@@ -131,7 +139,7 @@ const interlive = () => {
   interlivedItems.value = [];
 
   if (requests.value) {
-    requests.value.data.forEach((item, index) => {
+    requests.value.data.forEach((item : RequestItem, index: Number) => {
       interlivedItems.value.push({ data: item, type: 'data' });
       interlivedItems.value.push({ data: null, type: 'details' });
     });
@@ -150,22 +158,34 @@ const createRequests = () => {
   }
 
   axios.post(url + '/api/create', data)
-  .then(response => {
+  .then((response : AxiosResponse<RequestsResponse>) => {
     getRequests()
   })
   .finally(() => {
     isLoadingCreate.value = false;
-    showModal.value = false
+    showModalCreate.value = false
   });
 }
 
-const approveOrRejected = (item: any, status: number) => {
+const handleApproval = (item: RequestItem, status: number) => {
+  approveOrRejectedSelected.value = item; 
+  approveOrRejectedSelectedStatus.value = status;
+  showModalAnalysis.value = true; 
+};
+
+const confirmApproval = (item : string) => {
+  approveOrRejected(item)
+}
+
+const approveOrRejected = (observation : string) => {
 
   const url = window.location.origin;
 
   const data = {
-    status: status,
-    id_request: item.id_request
+    status: approveOrRejectedSelectedStatus.value,
+    id_request: approveOrRejectedSelected.value?.id_request,
+    observation : observation,
+    id_user_analysis : props.auth.user.id
   };
 
   axios.post(`${url}/api/approve-or-rejected`, data)
@@ -183,7 +203,7 @@ const approveOrRejected = (item: any, status: number) => {
           <div class="flex flex-col flex-1">
             <div class="flex flex-wrap justify-between p-4">
                 <p class="text-[#0e121b] text-[32px] font-bold leading-tight">Lista de Solicitações</p>
-                <button @click="() => {showModal = true}" class="p-3 bg-[#E8EBF2] rounded-md">
+                <button @click="() => {showModalCreate = true}" class="p-3 bg-[#E8EBF2] rounded-md">
                     Upload
                 </button>
             </div>
@@ -211,6 +231,8 @@ const approveOrRejected = (item: any, status: number) => {
                       <th class="px-4 py-3 text-left text-[#0e121b] text-sm font-medium leading-normal">Id</th>
                       <th class="px-4 py-3 text-left text-[#0e121b] w-[400px] text-sm font-medium leading-normal">Nome</th>
                       <th class="px-4 py-3 text-left text-[#0e121b] w-60 text-sm font-medium leading-normal">Status</th>
+                      <th v-if="selectedPage != 0" class="px-4 py-3 text-left text-[#0e121b] w-60 text-sm font-medium leading-normal">Observação</th>
+                      <th v-if="selectedPage != 0" class="px-4 py-3 text-left text-[#0e121b] w-60 text-sm font-medium leading-normal">Usuário Analise</th>
                       <th class="px-4 py-3 text-left text-[#0e121b] w-[400px] text-sm font-medium leading-normal"> Data Criação </th>
                       <th class="px-4 py-3 text-left text-[#0e121b] w-60 text-sm font-medium leading-normal">Ação</th>
                     </tr>
@@ -223,17 +245,23 @@ const approveOrRejected = (item: any, status: number) => {
                       <td v-if="item.type == 'data'" class="h-[60px] px-4 py-2 text-[#4e6797] text-sm font-normal leading-normal">#{{ item.data?.id_request }}</td>
                       <td v-if="item.type == 'data'" class="h-[60px] px-4 py-2 text-[#0e121b] text-sm font-normal leading-normal"> {{ item.data?.requesting_user.name }} </td>
                       <td v-if="item.type == 'data'" class="h-[60px] px-4 py-2 text-sm font-normal leading-normal">
-                        <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#e7ebf3] text-[#0e121b] text-sm font-medium leading-normal w-full">
-                          <span class="truncate">{{ decodeStatus(item.data?.status) || '-' }}</span>
+                        <button class="flex w-50 cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 bg-[#e7ebf3] text-[#0e121b] text-sm font-medium leading-normal">
+                          <span class="truncate">{{ decodeStatus(item.data?.status ?? 0) }}</span>
                         </button>
                       </td>
+                      <td v-if="item.type == 'data' && selectedPage != 0" class="h-[60px] px-4 max-w-80 py-2 text-sm font-normal leading-normal">
+                        {{ item.data?.observation }}
+                      </td>
+                      <td v-if="item.type == 'data' && selectedPage != 0" class="h-[60px] px-4 max-w-80 py-2 text-sm font-normal leading-normal">
+                        {{ item.data?.analysis_user?.name  }}
+                      </td>
                       <td v-if="item.type == 'data'" class="h-[60px] px-4 py-2 text-[#0e121b] text-sm font-normal leading-normal"> {{ item.data ? formattedDate(item.data.create_date) : '-' }}</td>
-                      <td v-if="item.type == 'data'" class="h-[60px] flex flex-row gap-3 px-4 py-2 text-[#0e121b] text-sm font-normal leading-normal">
-                        <div v-if="validateApproval(item.data)">
-                          <button @click="approveOrRejected(item.data, 2)" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">
+                      <td v-if="item.type == 'data'" class="h-[60px] gap-3 px-4 py-2 text-[#0e121b] items-center content-center text-sm font-normal leading-normal">
+                        <div v-if="item.data && validateApproval(item.data)" class="flex gap-2 items-center justify-center">
+                          <button @click="item.data && handleApproval(item.data, 2)" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">
                               Reprovar
                           </button>
-                          <button @click="approveOrRejected(item.data, 1)" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">
+                          <button @click="item.data && handleApproval(item.data, 1)" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700">
                               Aprovar
                           </button>
                         </div>
@@ -255,7 +283,8 @@ const approveOrRejected = (item: any, status: number) => {
         </div>
     </AuthenticatedLayout>
 
-    <ModalCreate :show="showModal" :isLoadingCreate="isLoadingCreate" @files="filesSelected" @save="createRequests" @close="showModal = false" />
+    <ModalCreate v-if="showModalCreate" :show="showModalCreate" :isLoadingCreate="isLoadingCreate" @files="filesSelected" @save="createRequests" @close="showModalCreate = false" />
+    <ModalAnalysis :show="showModalAnalysis" :isLoadingCreate="isLoadingCreate" @confirmObservation="confirmApproval"></ModalAnalysis>
 
 </template>
 

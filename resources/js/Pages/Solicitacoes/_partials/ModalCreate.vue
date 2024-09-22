@@ -10,7 +10,7 @@ const fileInput = ref<HTMLInputElement | null>(null);
 const emit = defineEmits(['files', 'save']);
 
 const props = defineProps<{
-    isLoadingCreate: boolean;
+    isLoadingCreate : boolean
 }>();
 
 watch(images.value, (newValue) => {

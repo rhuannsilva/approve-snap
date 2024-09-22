@@ -111,10 +111,10 @@ class RequestsUploadController extends Controller{
 
     public function approveOrRejected(Request $request) : Object {
 
-        $id_request = $request->id_request;
-        $status = $request->status;
-        $id_user_analysis = $request->id_user_analysis;
-        $observation = $request->observation;
+        $id_request = @$request->id_request;
+        $status = @$request->status;
+        $id_user_analysis = @$request->id_user_analysis;
+        $observation = @$request->observation;
 
         $request_analysis = $this->requestUploadRepositoryInterface->getById($id_request);
 
