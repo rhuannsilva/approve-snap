@@ -113,14 +113,14 @@ const saveImages = () => {
 
 .image-upload-wrap {
     margin-top: 20px;
-    border: 4px dashed #1fb264;
+    border: 4px dashed #E8EBF2;
     position: relative;
     text-align: center;
 }
 
 .image-dropping,
 .image-upload-wrap:hover {
-    background-color: #1fb264;
+    background-color: #E8EBF2;
     border: 4px dashed #ffffff;
 }
 
@@ -131,7 +131,7 @@ const saveImages = () => {
 .drag-text h3 {
     font-weight: 100;
     text-transform: uppercase;
-    color: #15824b;
+    color: #000;
     padding: 60px 0;
 }
 

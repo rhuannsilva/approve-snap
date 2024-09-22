@@ -13,10 +13,10 @@ class RequestUploadRepository implements RequestUploadRepositoryInterface{
         return RequestUploads::with([
 
             'requestingUser' => function ($query) { 
-                $query->select('id', 'name', 'permission');
+                $query->select('id', 'name');
             },
             'analysisUser' => function ($query) { 
-                $query->select('id', 'name', 'permission');
+                $query->select('id', 'name');
             },
             'files'])
 

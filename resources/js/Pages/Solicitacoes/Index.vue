@@ -39,7 +39,6 @@ interface RequestsResponse {
 interface Auth {
   user: {
     id: number;
-    permission: number;
     name: string;
   };
 }
@@ -57,10 +56,6 @@ watch(selectedPage, (newValue : Number) => {
 })
 
 const validateApproval = (item: RequestItem): boolean => {
-
-  if (props.auth.user.permission === 0) {
-    return false;
-  }
 
   if (item.status === 2 || item.status === 1) {
     return false;
