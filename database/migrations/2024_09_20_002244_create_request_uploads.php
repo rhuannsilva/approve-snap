@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('request_uploads', function (Blueprint $table) {
-            $table->increments('id_request')->primary();
+            $table->increments('id_request');
             $table->uuid('id_requesting_user');
             $table->uuid('id_analysis_user')->nullable();
             $table->integer('status');
             $table->string('observation')->nullable();
             $table->string('description')->nullable();
-            $table->timestamps();
-
+            $table->date('create_date')->nullable();
+            $table->date('edit_date')->nullable();
             $table->foreign('id_requesting_user')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('id_analysis_user')->references('id')->on('users')->onDelete('cascade');
         });
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('requests_uploads');
+        Schema::dropIfExists('request_uploads');
     }
 };

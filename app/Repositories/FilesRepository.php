@@ -9,4 +9,8 @@ class FilesRepository implements FilesRepositoryInterface {
     public function store($data){
         return Files::create($data);
     }
+
+    public function update($id,$data){
+        return Files::where("id",$id)->update($data);
+    }
 }

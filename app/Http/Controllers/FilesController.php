@@ -23,4 +23,9 @@ class FilesController extends Controller{
 
         $this->filesRepositoryInterface->store($data);
     }
+
+    public function update($id, $data){
+        
+        $this->filesRepositoryInterface->update($id, $data);
+    }
 }

@@ -10,3 +10,4 @@ Route::get('/user', function (Request $request) {
 
 Route::get('/', [RequestsUploadController::class,'index']);
 Route::post('/create', [RequestsUploadController::class,'store']);
+Route::post('/approve-or-rejected', [RequestsUploadController::class,'approveOrRejected']);

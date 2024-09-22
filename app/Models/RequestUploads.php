@@ -17,7 +17,11 @@ class RequestUploads extends Model
         'status',
         'id_analysis_user',
         'observation',
+        'create_date',
+        'edit_date'
     ];
+
+    public $timestamps = false;
 
     public function requestingUser()
     {
@@ -32,5 +36,16 @@ class RequestUploads extends Model
     public function files()
     {
         return $this->hasMany(Files::class, 'id_request');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+
+            $model->create_date = now();
+
+        });
     }
 }

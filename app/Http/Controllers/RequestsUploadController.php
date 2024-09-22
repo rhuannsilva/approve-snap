@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\RequestUploadResource;
 use App\Interfaces\RequestUploadRepositoryInterface;
 use App\Interfaces\FilesRepositoryInterface;
 use App\Models\RequestsUploads;
@@ -11,13 +10,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\FilesController;
-use App\Services\FileStorageService;
+use App\Http\Services\FileStorageService;
+use App\Http\Resources\RequestUploadResource;
 use App\Utils\Logger;
+use PhpParser\Node\Expr\Cast\Object_;
 
 class RequestsUploadController extends Controller{
 
     private RequestUploadRepositoryInterface $requestUploadRepositoryInterface;
-    private FilesRepositoryInterface $filesRepository;
 
     public function __construct(
         RequestUploadRepositoryInterface $requestUploadRepositoryInterface,
@@ -28,12 +28,21 @@ class RequestsUploadController extends Controller{
     public function index(Request $request){
 
         try {
-            
+
+            $request_upload = $this->requestUploadRepositoryInterface->index($request->query());
+            $meta = $request_upload->toArray();
+            unset($meta['data']);
+
             return response()->json([
-                'data' => $this->requestUploadRepositoryInterface->index()
+                'data' => RequestUploadResource::collection($request_upload),
+                'meta' => [
+                    $meta
+                ]
             ], 200);
 
         } catch (\Throwable $th) {
+
+            Logger::error('[RequestUploadController]', '[index]',$th->getMessage());
 
             return response()->json([
                 'msg' => $th->getMessage(),
@@ -41,7 +50,12 @@ class RequestsUploadController extends Controller{
         }
     }
 
-    public function store (Request $request){
+    public function update($data, $id){
+
+        $this->requestUploadRepositoryInterface->update($data, $id);
+    }
+
+    public function store (Request $request) : Object {
 
         try {
 
@@ -63,14 +77,14 @@ class RequestsUploadController extends Controller{
 
             foreach($data['images'] as $item){
 
-                $result = FileStorageService::upload($item);
+                $result = FileStorageService::upload($item, $resultUpload->id_request);
 
                 if($result){
 
                     $file = [
                         'id_request' => $resultUpload->id_request,
-                        'name_file' => $item['name'],
-                        'path' => '/pending/' . $item['name'],
+                        'name_file' => $resultUpload->id_request . '-' . $item['name'],
+                        'path' => '/pending/' . $resultUpload->id_request . '-' . $item['name'],
                     ];
 
                     $fileController->store($file);
@@ -89,9 +103,44 @@ class RequestsUploadController extends Controller{
             Logger::error('[RequestUploadController]', '[store]',$th->getMessage());
 
             return response()->json([
-                'msg' => $th->getMessage(),
+                'msg' => $th->getLine() . $th->getMessage(),
             ], 500);
         }
 
+    }
+
+    public function approveOrRejected(Request $request) : Object {
+
+        $id_request = $request->id_request;
+        $status = $request->status;
+        $id_user_analysis = $request->id_user_analysis;
+        $observation = $request->observation;
+
+        $request_analysis = $this->requestUploadRepositoryInterface->getById($id_request);
+
+        $file_controller = app()->make(FilesController::class);
+
+        foreach($request_analysis->files as $item){
+
+            $new_path = FileStorageService::moveImage($item, $status);
+
+            $update_file = [
+                'path' => $new_path
+            ];
+
+            $file_controller->update($item->id, $update_file);
+        }
+
+        $update_request_upload = [
+            'status' => $status,
+            'id_analysis_user' => $id_user_analysis,
+            'observation' => $observation
+        ];
+
+        $this->update($update_request_upload, $id_request);
+
+        return response()->json([
+            'msg' => 'Analisado com sucesso'
+        ], 200);
     }
 }
