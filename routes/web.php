@@ -17,7 +17,7 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/', function () { return Inertia::render('Solicitacoes/Index');})->name('index');
+    Route::get('/', function () { return Inertia::render('Requests/Index');})->name('index');
 });
 
 require __DIR__.'/auth.php';
