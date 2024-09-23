@@ -25,10 +25,17 @@ interface RequestItem {
   requesting_user: {
     name: string;
   };
+  analysis_user: AnalysisUser
+  observation: string;
   id_requesting_user: string;
   status: number;
   create_date: string;
   files: any[];
+}
+
+interface AnalysisUser {
+  id: string,
+  name: string
 }
 
 interface RequestsResponse {
@@ -38,7 +45,7 @@ interface RequestsResponse {
 
 interface Auth {
   user: {
-    id: number;
+    id: string;
     name: string;
   };
 }

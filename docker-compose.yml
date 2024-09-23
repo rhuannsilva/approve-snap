@@ -8,6 +8,14 @@ services:
             - 5173:5173
         volumes:
             - .:/var/www:cached
+        command: >
+            sh -c "
+            composer install &&
+            npm install &&
+            npm run build &&
+            php artisan migrate --force &&
+            php-fpm
+            "
 
     ####################################################################################################
     # Nginx
@@ -110,7 +118,7 @@ services:
     ####################################################################################################
     db:
         image: bitnami/postgresql:latest
-        container_name: postgres-stubb
+        container_name: postgres-approve-snap
         ports:
             - 5432:5432
         volumes:

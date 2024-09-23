@@ -31,13 +31,14 @@ const submit = () => {
         </div>
 
         <form @submit.prevent="submit">
-            <div>
 
-                <label for="email" value="Email" />
+            <div class="flex flex-col gap-2">
 
-                <input type="id"
+                <label for="email">E-mail</label>
+
+                <input type="text"
                     id="email"
-                    class="mt-1 block w-full"
+                    class="block w-full rounded-md border-[#d0d7e7] "
                     v-model="form.email"
                     required
                     autofocus
@@ -46,23 +47,29 @@ const submit = () => {
 
             </div>
 
-            <div class="mt-4">
+            <div class="flex flex-col gap-2">
 
-                <label for="password" value="password" />
+                <label for="email">Senha</label>
 
                 <input
                     id="password"
                     type="password"
-                    class="mt-1 block w-full"
+                    class="block w-full rounded-md border-[#d0d7e7] "
                     v-model="form.password"
                     required
                     autocomplete="current-password"
                 />
 
+                <span v-if="form.errors" class="mb-4 text-red-400">{{ form.errors.email }}</span>
+
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <button class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+            <div class="flex items-center justify-between mt-4">
+                <div class="flex gap-2">
+                    <p>Não tem cadastro ?</p> 
+                    <a href="/register" class="text-blue-500">  Cadastre-se</a>
+                </div>
+                <button class="ms-4 bg-gray-300 p-2 rounded-md" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Login
                 </button>
             </div>
