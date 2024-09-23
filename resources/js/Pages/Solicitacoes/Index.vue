@@ -38,7 +38,7 @@ interface RequestsResponse {
 
 interface Auth {
   user: {
-    id: number;
+    id: string;
     name: string;
   };
 }
