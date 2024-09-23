@@ -60,6 +60,8 @@ const submit = () => {
                     autocomplete="current-password"
                 />
 
+                <span v-if="form.errors" class="mb-4 text-red-400">{{ form.errors.email }}</span>
+
             </div>
 
             <div class="flex items-center justify-between mt-4">

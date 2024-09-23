@@ -34,5 +34,15 @@ git clone https://github.com/rhuannsilva/approve-snap.git
 docker-compose up -d
 ```
 
-4. **Acesse a url do container php por padrao localhost:9000**
+4. **Aguarde os comandos serem executados no container do php**
+
+```sh
+composer install &&
+npm install &&
+npm run build &&
+php artisan migrate --force &&
+php-fpm
+```
+
+5. **Acesse a url do container php por padrao localhost:9000**
 
