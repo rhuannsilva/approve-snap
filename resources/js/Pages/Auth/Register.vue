@@ -23,78 +23,85 @@ const submit = () => {
         <Head title="Register" />
 
         <form @submit.prevent="submit">
-            <div>
-                <label for="name" value="Name" />
 
+            <div class="flex flex-col gap-2">
 
+                <label for="name">Nome</label>
 
                 <input
                     id="name"
                     type="text"
-                    class="mt-1 block w-full"
+                    class="block w-full rounded-md border-[#d0d7e7]"
                     v-model="form.name"
                     required
                     autofocus
                     autocomplete="name"
                 />
 
-                <InputError class="mt-2" :message="form.errors.name" />
+                <span class="mb-4 text-red-400">{{ form.errors.name }}</span>
+
             </div>
 
-            <div class="mt-4">
-                <label for="email" value="Email" />
+            <div class="flex flex-col gap-2">
+
+                <label for="email">E-mail</label>
 
                 <input
                     id="email"
                     type="email"
-                    class="mt-1 block w-full"
+                    class="block w-full rounded-md border-[#d0d7e7] "
                     v-model="form.email"
                     required
                     autocomplete="username"
                 />
 
-                <InputError class="mt-2" :message="form.errors.email" />
+                <span class="mb-4 text-red-400">{{ form.errors.email }}</span>
+
             </div>
 
-            <div class="mt-4">
-                <label for="password" value="Password" />
+            <div class="flex flex-col gap-2">
+
+                <label for="email">Senha</label>
 
                 <input
                     id="password"
                     type="password"
-                    class="mt-1 block w-full"
+                    class="block w-full rounded-md border-[#d0d7e7] "
                     v-model="form.password"
                     required
                     autocomplete="new-password"
                 />
 
-                <InputError class="mt-2" :message="form.errors.password" />
+                <span class="mb-4 text-red-400">{{ form.errors.password }}</span>
+
             </div>
 
-            <div class="mt-4">
-                <label for="password_confirmation" value="Confirm Password" />
+            <div class="flex flex-col gap-2">
+
+                <label for="email">Confirme a senha</label>
 
                 <input
                     id="password_confirmation"
                     type="password"
-                    class="mt-1 block w-full"
+                    class="block w-full rounded-md border-[#d0d7e7] "
                     v-model="form.password_confirmation"
                     required
                     autocomplete="new-password"
                 />
 
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
+                <span class="mb-4 text-red-400">{{ form.errors.password_confirmation }}</span>
+
             </div>
 
             <div class="flex items-center justify-end mt-4">
                 <Link
                     :href="route('login')"
-                    class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
+                    class="underline text-blue-500 text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
                 >
-                    Already registered?
+                    Já está cadastrado?
                 </Link>
 
-                <button>
+                <button class="ms-4 bg-gray-300 p-2 rounded-md">
                     Register
                 </button>
             </div>
