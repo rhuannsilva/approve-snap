@@ -14,6 +14,8 @@ services:
             npm install &&
             npm run build &&
             php artisan migrate --force &&
+            chmod -R gu+w storage &&
+            chmod -R guo+w storage &&
             php-fpm
             "
 
